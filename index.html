@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Valley</title>
+    <!--................... -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+   
+</head>
+
+<body style="background-color: cyan ; color: oldlace;">
+    <!--..................-->
+    <nav style="background-color: navy; color: oldlace;" class="navbar navbar-expand-lg navbar-light bg-nav">
+        <a style="color: oldlace;" class="navbar-brand" href="#">Food Valley</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div  class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a style="color: oldlace;" class="nav-link" href="#home">Home </a>
+                </li>
+                <li class="nav-item">
+                    <a style="color: oldlace;"  class="nav-link" href="#products">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a style="color: oldlace;"  class="nav-link" href="#about-us">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a style="color: oldlace;"  class="nav-link" href="#contact">Contact Us</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section>
+
+        <!-- ................ -->
+        <div class="container">
+            <div id="search-area" style="text-align: center; margin-top: 40px">
+                <input style="width: 65%;"  id="search-meal" value="" type="search" placeholder="Enter your  meals name... ">
+                <button id="btn-search">Search</button>
+            </div>
+            <div id="meal-details"> </div>
+            <div id="meals-list"> </div>
+            <div id="show-error" style="display: none; text-align: center; color: red; font-size: 40px;">
+                <h1>OOPS Please try again .</h1>
+            </div>
+
+        </div>
+    </section>
+
+
+
+
+<script>
+    
+    
+    //................
+
+document.getElementById('btn-search').addEventListener('click', function () {
+    const searchMeal = document.getElementById('search-meal').value;
+    if (searchMeal == "") {
+        document.getElementById('show-error').style.display = 'block';
+    } else {
+        displayInputDish(searchMeal);
+    }
+
+    document.getElementById('meals-list').innerHTML = "";
+    document.getElementById('meal-details').innerHTML = "";
+});
+
+//............................
+function displayInputDish(input) {
+    fetch('https://www.themealdb.com/api/json/v1/1/search.php?f=${input}')
+        .then(res => res.json())
+        .then(data => displayDishes(data.meals))
+        .catch(error => document.getElementById('show-error').style.display = 'block');
+}
+//......................
+const displayDishes = meals => {
+    const mealsDiv = document.getElementById('meals-list');
+    meals.forEach(meal => {
+        const mealDiv = document.createElement('div');
+        mealDiv.className = 'meal';
+        const mealInfo = `
+            <div onclick="showMeals('${meal.strMeal}')">
+                <img src="${meal.strMealThumb}">
+                <h3>${meal.strMeal}</h3> </div>`;
+        mealDiv.innerHTML = mealInfo;
+        mealsDiv.appendChild(mealDiv);
+        document.getElementById('show-error').style.display = 'none';
+    });
+}
+
+//......................
+const showMeals = meal => {
+    const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${meal}`
+    fetch(url)
+        .then(res => res.json())
+        .then(data => showMealDetails(data.meals[0]))
+}
+
+//.......................
+const showMealDetails = meal => {
+    const mealDiv = document.getElementById('meal-details');
+    mealDiv.innerHTML = `
+        <img src="${meal.strMealThumb}">
+        <h3>${meal.strMeal}</h3>
+        <h6>Ingredients:</h6>
+        <ul>
+        <li> * ${meal.strIngredient1}</li>
+        <li> * ${meal.strIngredient2}</li>
+        <li> * ${meal.idMeals}</li>
+      
+        </ul>
+        `;
+}
+
+</script>
+
+
+</body>
+
+</html>
